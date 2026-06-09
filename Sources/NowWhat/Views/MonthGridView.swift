@@ -35,9 +35,9 @@ struct MonthGridView: View {
         }
     }
 
-    /// Refetch markers when the month changes or access is (re)granted.
+    /// Refetch markers when the month changes, access is (re)granted, or the store changes.
     private func markerKey(_ days: [Date]) -> String {
         let first = days.first?.timeIntervalSince1970 ?? 0
-        return "\(first)-\(eventStore.authorizationStatus.rawValue)"
+        return "\(first)-\(eventStore.authorizationStatus.rawValue)-\(eventStore.changeToken)"
     }
 }

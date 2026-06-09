@@ -1,96 +1,65 @@
-# Now What
+<p align="center">
+  <img src="assets/icon.png" alt="Now What icon" width="128" height="128">
+</p>
 
-A tiny, fast macOS menu bar calendar. No dock icon — it lives in the menu bar and
-opens a small month calendar with the events for the selected day.
+<h1 align="center">Now What</h1>
+
+A tiny, fast macOS menu bar calendar. No dock icon — it lives in the menu bar and opens a small month calendar with the events for the selected day.
+
+Click the menu bar date to open the calendar. It opens on today, shows the whole month one week per row, and lists the selected day's events below. Navigate months with the arrows, pick a year from the dropdown, and click any day to see what's on it.
+
+> Requires **macOS 14 (Sonoma) or later**.
 
 ## Features
 
-- **Month calendar** in a menu bar popover: full month, one week per row, with quick
-  navigation by month (`‹ ›`) and year (`‹‹ ››`). Days outside the current month are
-  greyed out. Click the month title to jump back to today.
-- **macOS Calendar integration** via EventKit: shows events for the selected day in a
-  small scrollable list. Days with events show a dot. (No notifications.)
-- **Focused on today** by default; click any day to see its events below.
-- **Settings** (gear icon):
-  - Launch at login
-  - Day the week starts on (default: Monday)
-  - Grey out weekend days (default: off)
-  - Highlight holidays from your macOS Holidays calendar (default: off)
+- **Month calendar** — full month, one week per row; navigate months with `‹ ›` and pick the year from a dropdown. Days outside the month are greyed out; click the month name to jump back to today.
+- **macOS Calendar integration** — shows the selected day's events in a scrollable list via EventKit, and marks days that have events with a dot. No notifications, no account.
+- **Today by default** — opens focused on today; click a day to see its events.
+- **Settings**:
+  - Launch at login.
+  - Day the week starts on (default: Monday).
+  - Remember the last selected day, or reset to today when closed (default: reset).
+  - Translucent background.
+  - Grey out weekend days (default: off).
+  - Show which days have events (default: on).
+  - Highlight holidays from your macOS Holidays calendar (default: off).
+  - Hide today's past events (default: on).
+  - **Check for Updates**.
+- **Lightweight** — native Swift + SwiftUI/AppKit.
 
-## Requirements
+## Install
 
-- macOS 14 (Sonoma) or later
-- Swift toolchain (Xcode Command Line Tools: `xcode-select --install`)
+1. Download `NowWhat.zip` from the [latest release](https://github.com/Polmonite/NowWhat/releases/latest).
+2. Unzip and drag **Now What.app** into `/Applications`.
+3. Launch it. A calendar icon showing today's date appears in your menu bar. The first time you open the events list, click **Connect to Calendar** and grant access.
 
-## Build & run
+### "Apple could not verify Now What is free of malware"
+
+This build is **not notarized** (that requires a paid Apple Developer account), so Gatekeeper warns on first launch. To open it anyway (only needed once per version):
+
+- **Right-click** `Now What.app` → **Open** → **Open** in the dialog, **or**
+- Open it once, then go to **System Settings → Privacy & Security**, scroll down, and click **Open Anyway**.
+
+Alternatively, strip the quarantine flag in Terminal:
+
+```sh
+xattr -dr com.apple.quarantine "/Applications/Now What.app"
+```
+
+## Build from source
+
+Requires the Swift toolchain (Command Line Tools: `xcode-select --install`).
 
 ```sh
 ./build.sh --release --run
 ```
 
-This compiles, assembles `build/Now What.app`, ad-hoc signs it (needed so calendar
-access and login-item registration work), and launches it. A 📅 icon with today's
-weekday/date appears in the menu bar — click it.
+`build.sh` compiles via Swift Package Manager, generates the app icon, assembles `Now What.app`, and ad-hoc signs it (needed so calendar access and launch-at-login work).
 
-The first time you open the events list, click **Connect to Calendar** and grant access.
+## Updates
 
-### Installing
+Settings → **Check for Updates** queries the GitHub Releases page and tells you when a newer version exists. No telemetry, no account — just a single request to the public GitHub API.
 
-To make *Launch at login* fire reliably, move the app to `/Applications`:
+## License
 
-```sh
-./build.sh --release
-cp -R "build/Now What.app" /Applications/
-open "/Applications/Now What.app"
-```
-
-## Releasing
-
-Releases are published to GitHub by **pushing a version tag** — a GitHub Actions
-workflow (`.github/workflows/release.yml`) builds on a macOS runner and attaches the
-zipped app to a new release.
-
-```sh
-git tag v1.1
-git push origin v1.1
-```
-
-The workflow stamps the app's version from the tag (so `v1.1` → `CFBundleShortVersionString = 1.1`),
-builds, zips `Now What.app`, and creates the release with auto-generated notes. You only
-manage the tag — no manual version bumping needed.
-
-### Check for updates
-
-Settings ▸ **Updates** shows the running version and a **Check for Updates…** button. It
-queries the latest GitHub release of `Polmonite/NowWhat`, compares versions, and offers a
-button to open the release page if a newer one exists.
-
-### Installing a downloaded release
-
-The app is ad-hoc signed (not notarized), so Gatekeeper will warn on first open. Either
-right-click the app ▸ **Open**, or strip the quarantine flag:
-
-```sh
-xattr -dr com.apple.quarantine "Now What.app"
-```
-
-## Notes
-
-- **Holidays** are detected automatically from a subscribed macOS Holidays calendar
-  (matched by name across common locales). If you don't have one subscribed, the
-  highlight option simply has nothing to mark. Subscribe in Calendar.app via
-  *File ▸ New Holiday Calendar* (or it may already be present).
-- The app is unsandboxed and ad-hoc signed for local use. For distribution you'd add a
-  Developer ID signature and notarization.
-
-## Project layout
-
-```
-Sources/NowWhat/
-  NowWhatApp.swift          App entry, MenuBarExtra, calendar/settings switch
-  Models/                   AppSettings, CalendarModel, EventStore (EventKit)
-  Utilities/                LaunchAtLogin (SMAppService), CalendarGrid (layout math)
-  Views/                    CalendarView, MonthGridView, DayCell, EventListView, SettingsView, …
-Resources/Info.plist        Bundle metadata (LSUIElement, calendar usage strings)
-build.sh                    Builds and signs the .app bundle
-```
+[MIT](LICENSE)

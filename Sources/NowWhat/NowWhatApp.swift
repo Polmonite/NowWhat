@@ -2,6 +2,7 @@ import SwiftUI
 
 @main
 struct NowWhatApp: App {
+    @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @StateObject private var settings = AppSettings()
     @StateObject private var eventStore = EventStore()
     @StateObject private var model = CalendarModel()

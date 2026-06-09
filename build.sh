@@ -20,6 +20,11 @@ EXECUTABLE="NowWhat"
 BUNDLE_ID="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' Resources/Info.plist)"
 OUT="build/$APP_NAME.app"
 
+if [ ! -f Resources/AppIcon.icns ]; then
+    echo "==> Generating app icon"
+    ./tools/make_icon.sh
+fi
+
 echo "==> swift build -c $CONFIG"
 swift build -c "$CONFIG"
 

@@ -13,25 +13,33 @@ struct EventListView: View {
             Text(selectedTitle)
                 .font(.subheadline.bold())
 
-            switch eventStore.authorizationStatus {
-            case .notDetermined:
-                Button("Connect to Calendar") { eventStore.requestAccess() }
-                    .controlSize(.small)
-            case .fullAccess:
-                eventList
-            default:
-                accessDenied
+            Group {
+                switch eventStore.authorizationStatus {
+                case .notDetermined:
+                    Button("Connect to Calendar") { eventStore.requestAccess() }
+                        .controlSize(.small)
+                case .fullAccess:
+                    eventList
+                default:
+                    accessDenied
+                }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }
+        // A constant height keeps the MenuBarExtra(.window) popover from resizing as the
+        // selected day's event count changes — resizing makes it drift off the menu bar.
         .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(height: 280)
         .task(id: listKey) {
             events = eventStore.events(on: model.selectedDate)
         }
     }
 
-    /// Events to show, after optionally hiding ones that already ended.
+    /// Events to show. "Hide today's past events" only applies to today — it trims events that
+    /// already ended, leaving what's still upcoming. Other days always show every event.
     private var visibleEvents: [EKEvent] {
-        guard settings.hidePastEvents else { return events }
+        guard settings.hidePastEvents,
+              Calendar.current.isDateInToday(model.selectedDate) else { return events }
         let now = Date()
         return events.filter { $0.endDate >= now }
     }
@@ -46,10 +54,12 @@ struct EventListView: View {
         } else {
             ScrollView {
                 VStack(spacing: 6) {
-                    ForEach(visibleEvents, id: \.eventIdentifier) { EventRow(event: $0) }
+                    ForEach(Array(visibleEvents.enumerated()), id: \.offset) { _, event in
+                        EventRow(event: event)
+                    }
                 }
             }
-            .frame(minHeight: 160, maxHeight: 340)
+            .frame(maxHeight: .infinity)
         }
     }
 
@@ -68,7 +78,7 @@ struct EventListView: View {
     }
 
     private var listKey: String {
-        "\(model.selectedDate.timeIntervalSince1970)-\(eventStore.authorizationStatus.rawValue)"
+        "\(model.selectedDate.timeIntervalSince1970)-\(eventStore.authorizationStatus.rawValue)-\(eventStore.changeToken)"
     }
 
     private var selectedTitle: String {

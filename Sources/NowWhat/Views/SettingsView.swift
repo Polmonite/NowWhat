@@ -10,7 +10,7 @@ struct SettingsView: View {
             settingsForm
             footer
         }
-        .frame(width: 420, height: 600)
+        .frame(width: 420, height: 740)
     }
 
     private var settingsForm: some View {
@@ -41,7 +41,7 @@ struct SettingsView: View {
             }
 
             Section("Events") {
-                Toggle("Hide past events", isOn: $settings.hidePastEvents)
+                Toggle("Hide today's past events", isOn: $settings.hidePastEvents)
             }
 
             Section("Updates") {

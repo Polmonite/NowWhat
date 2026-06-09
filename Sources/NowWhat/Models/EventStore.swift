@@ -6,6 +6,9 @@ import Foundation
 /// system "Holidays" subscription calendar so holidays can be highlighted.
 final class EventStore: ObservableObject {
     @Published private(set) var authorizationStatus: EKAuthorizationStatus
+    /// Bumped whenever the underlying store changes, so views refetch instead of
+    /// holding on to stale (faulted) EKEvent objects.
+    @Published private(set) var changeToken = 0
 
     private let store = EKEventStore()
     private var holidayCalendarIDs: Set<String> = []
@@ -67,7 +70,7 @@ final class EventStore: ObservableObject {
     @objc private func storeChanged() {
         DispatchQueue.main.async {
             self.refreshHolidayCalendars()
-            self.objectWillChange.send()
+            self.changeToken &+= 1
         }
     }
 
