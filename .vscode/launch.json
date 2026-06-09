@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:NowWhat}",
+            "name": "Debug NowWhat",
+            "target": "NowWhat",
+            "configuration": "debug",
+            "preLaunchTask": "swift: Build Debug NowWhat"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:NowWhat}",
+            "name": "Release NowWhat",
+            "target": "NowWhat",
+            "configuration": "release",
+            "preLaunchTask": "swift: Build Release NowWhat"
+        }
+    ]
+}

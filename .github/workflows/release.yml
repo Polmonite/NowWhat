@@ -1,0 +1,36 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set version from tag
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $VERSION" Resources/Info.plist
+          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $VERSION" Resources/Info.plist
+          echo "Building version $VERSION"
+
+      - name: Generate app icon
+        run: ./tools/make_icon.sh
+
+      - name: Build app
+        run: ./build.sh --release
+
+      - name: Zip app
+        run: ditto -c -k --keepParent "build/Now What.app" "NowWhat.zip"
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" "NowWhat.zip" --title "$GITHUB_REF_NAME" --generate-notes
