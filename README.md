@@ -18,7 +18,7 @@ Click the menu bar date to open the calendar. It opens on today, shows the whole
 - **Settings**:
   - Launch at login.
   - Day the week starts on (default: Monday).
-  - Remember the last selected day, or reset to today when closed (default: reset).
+  - Remember the last selected day, or reset to today when opened (default: reset).
   - Translucent background.
   - Grey out weekend days (default: off).
   - Show which days have events (default: on).

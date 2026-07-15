@@ -22,7 +22,7 @@ struct SettingsView: View {
                         Text(option.name).tag(option.value)
                     }
                 }
-                Picker("When closed", selection: $settings.rememberSelectedDay) {
+                Picker("When opened", selection: $settings.rememberSelectedDay) {
                     Text("Reset to today").tag(false)
                     Text("Remember selected day").tag(true)
                 }

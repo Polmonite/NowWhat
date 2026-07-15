@@ -15,8 +15,8 @@ struct CalendarView: View {
         }
         .padding(10)
         .background(backgroundView)
-        .onDisappear {
-            // When the popover closes, reset to today unless the user opted to remember.
+        .onAppear {
+            // When the popover opens, reset to today unless the user opted to remember.
             if !settings.rememberSelectedDay { model.goToToday() }
         }
     }
